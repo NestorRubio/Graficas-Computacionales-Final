@@ -1,3 +1,4 @@
+//creacion del espacio de la escena
 function createScene () {  
     const  scene = new THREE.Scene()  
     const  camera = new THREE.PerspectiveCamera(60,  window.innerWidth / window.innerHeight, 1, 100)  
@@ -8,11 +9,13 @@ function createScene () {
     renderer.setSize(window.innerWidth, window.innerHeight)  
     document.body.appendChild(renderer.domElement)  
     
+    //creacion de un listener para permitir a la camara escuchar audio
     const listener = new THREE.AudioListener();
     camera.add( listener );
     const sound = new THREE.Audio( listener );
     const audioLoader = new THREE.AudioLoader();
 
+    //creacion de una fuente de audio global
     audioLoader.load( '../music/TodoParaTi.ogg', function( buffer ) {
 	    sound.setBuffer( buffer );
 	    sound.setLoop( true );
@@ -20,8 +23,8 @@ function createScene () {
         sound.play();
     });
 
-    const color = 0xFFFFFF  
-    const intensity = 0.75
+    const color = 0xFFFFFF //color de las lineas que unen los puntos del corazon 
+    const intensity = 0.75 //intensidad de color de mesh de corazon
 
     const light1 = new THREE.PointLight(color, intensity)
     const light2 = new THREE.PointLight(color, intensity)
@@ -31,11 +34,14 @@ function createScene () {
     light1.position.set(-15, -10, 30)
     light2.position.set(15, 10, 30)
     light3.position.set(-15, -10, -30)
-    light4.position.set(15, 10, -30)    
+    light4.position.set(15, 10, -30)
+
     scene.add(light1)
     scene.add(light2)
     scene.add(light3)
     scene.add(light4)
+
+    //color rosa claro del fondo de la escena
     scene.background = new THREE.Color(0xcc6699);       
     return {   
       scene,
@@ -45,28 +51,30 @@ function createScene () {
   }
 
 function init () {
-    const {scene, camera, renderer} = createScene()
-    const { vertices, trianglesIndexes} = useCoordinates()
-    const { geo, material, heartMesh } = createHeartMesh(vertices, trianglesIndexes)
-    const { controls } = setControls(camera, renderer.domElement)
-    scene.add(heartMesh)
+    const {scene, camera, renderer} = createScene() //creacion de la escena donde estaran los modelos
+    const { vertices, trianglesIndexes} = useCoordinates() // grafica los puntos que formaran los triangulos que formaran el corazon
+    const { geo, material, heartMesh } = createHeartMesh(vertices, trianglesIndexes) //crea el mesh a partir de los puntos anteriores
+    const { controls } = setControls(camera, renderer.domElement) // declara los controles(con click izq, der, y rueda de mouse) para la escena
+    scene.add(heartMesh) //agrega el corazon a la escena
 
-    const geometryCube = new THREE.BoxGeometry(10, 10, 10);
+    const geometryCube = new THREE.BoxGeometry(10, 10, 10); //crea la geometra del cubo en escena
     const loaderCube = new THREE.TextureLoader();
-    loaderCube.crossOrigin = " ";
+    loaderCube.crossOrigin = " "; //deja el crossorigin en blanco para evitar problemas de visualizacion de las texturas
 
+    //Asigna una textura diferente a cada cara del cubo
     const cubeMaterials = [
-        new THREE.MeshPhongMaterial({ map: loaderCube.load('../textures/vale1.png')}), //right side
-        new THREE.MeshPhongMaterial({ map: loaderCube.load('../textures/vale2.png')}), //left side
-        new THREE.MeshPhongMaterial({ map: loaderCube.load('../textures/vale3.png')}), //top side
-        new THREE.MeshPhongMaterial({ map: loaderCube.load('../textures/vale4.png')}), //bottom side
-        new THREE.MeshPhongMaterial({ map: loaderCube.load('../textures/vale5.png')}), //front side
-        new THREE.MeshPhongMaterial({ map: loaderCube.load('../textures/vale6.png')}) //back side
+        new THREE.MeshPhongMaterial({ map: loaderCube.load('../textures/vale1.png')}), //lado derecho
+        new THREE.MeshPhongMaterial({ map: loaderCube.load('../textures/vale2.png')}), //lado izquierdo
+        new THREE.MeshPhongMaterial({ map: loaderCube.load('../textures/vale3.png')}), //arriba
+        new THREE.MeshPhongMaterial({ map: loaderCube.load('../textures/vale4.png')}), //abajo
+        new THREE.MeshPhongMaterial({ map: loaderCube.load('../textures/vale5.png')}), //frente
+        new THREE.MeshPhongMaterial({ map: loaderCube.load('../textures/vale6.png')}) //detras
     ];
-    const cube = new THREE.Mesh(geometryCube, cubeMaterials);
-    scene.add(cube);
-    cube.position.set(0, -5, 0);
+    const cube = new THREE.Mesh(geometryCube, cubeMaterials); //crea el cubo con las diferentes texturas
+    scene.add(cube); //agrega el cubo a la escena
+    cube.position.set(0, -5, 0); //posiciona el cubo centrado debajo del corazon
 
+    //anima el corazon a girar sobre su propio eje y, actualiza los controles al mover. 
     const  animate = function () {
         requestAnimationFrame( animate )
         renderer.render( scene, camera )
@@ -78,11 +86,12 @@ function init () {
 
 init()
 
+//declaracion de las coordenadas de los puntos para formar los triangulos del corazon
 function useCoordinates () {
     const vertices = [
-     new THREE.Vector3(0, 0, 0), // point C
+     new THREE.Vector3(0, 0, 0), // punto C
      new THREE.Vector3(0, 5, -1.5),
-     new THREE.Vector3(5, 5, 0), // point A
+     new THREE.Vector3(5, 5, 0), // punto A
      new THREE.Vector3(9, 9, 0),
      new THREE.Vector3(5, 9, 2),
      new THREE.Vector3(7, 13, 0),
@@ -91,7 +100,7 @@ function useCoordinates () {
      new THREE.Vector3(5, 9, -2),
      new THREE.Vector3(0, 8, -3),
      new THREE.Vector3(0, 8, 3),
-     new THREE.Vector3(0, 5, 1.5), // point B
+     new THREE.Vector3(0, 5, 1.5), // punto B
      new THREE.Vector3(-9, 9, 0),
      new THREE.Vector3(-5, 5, 0),
      new THREE.Vector3(-5, 9, -2),
@@ -99,9 +108,11 @@ function useCoordinates () {
      new THREE.Vector3(-7, 13, 0),
      new THREE.Vector3(-3, 13, 0),
     ];
+
+    //Forma los triangulos del corazon a partir de los puntos
     const trianglesIndexes = [
-    // face 1
-     2,11,0, // This represents the 3 points A,B,C which compose the first triangle
+    // cara 1
+     2,11,0, 
      2,3,4,
      5,4,3,
      4,5,6,
@@ -117,7 +128,7 @@ function useCoordinates () {
      7,15,10,
      11,10,15,
      13,11,15,
-    // face 2
+    // cara 2
      0,1,2,
      1,9,2,
      9,8,2,
@@ -141,7 +152,7 @@ function useCoordinates () {
         trianglesIndexes
     }
 }
-
+//crea el corazon a partir de las coordenadas de los puntos y triangulos formados entre los mismos
 function createHeartMesh (coordinatesList, trianglesIndexes) {
     const geo = new THREE.Geometry()
     for (let i in trianglesIndexes) {
@@ -151,6 +162,7 @@ function createHeartMesh (coordinatesList, trianglesIndexes) {
     }
 }
 
+//solidifica el mesh para dar textura al corazon
 geo.computeVertexNormals()
     const texture = new THREE.TextureLoader().load('../textures/texturaCorazon.png');
     const material = new THREE.MeshPhongMaterial( { map: texture } )
@@ -162,6 +174,7 @@ geo.computeVertexNormals()
     }
 }
 
+//formacion del esqueleto del corazon
 function addWireFrameToMesh (mesh, geometry) {
     const wireframe = new THREE.WireframeGeometry( geometry )
     const lineMat = new THREE.LineBasicMaterial( { color: 0x000000, linewidth: 2 } )
@@ -169,6 +182,7 @@ function addWireFrameToMesh (mesh, geometry) {
     mesh.add(line)
 }
 
+//funcion de los controles orbitales para moverse en la escena y hacer zoom
 function  setControls (camera, domElement) {
     const controls = new  THREE.OrbitControls( camera, domElement )
     controls.update()
