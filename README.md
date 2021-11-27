@@ -8,3 +8,7 @@ Geometria de corazon obtenida de Edd Djer de: https://eddine-djerboua.medium.com
 Utilizar Browser que no sea a base de chromium para escuchar musica en autoplay.
 
 Github Pages: https://nestorrubio.github.io/
+
+Para moverse alrededor de los modelos usar click izquierdo.
+Para mover la camara en la escena usar click derecho.
+Para hacer Zoom In o Zoom Out usa la rueda del mouse
