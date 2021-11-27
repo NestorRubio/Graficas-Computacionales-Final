@@ -11,4 +11,4 @@ Github Pages: https://nestorrubio.github.io/
 
 Para moverse alrededor de los modelos usar click izquierdo.
 Para mover la camara en la escena usar click derecho.
-Para hacer Zoom In o Zoom Out usa la rueda del mouse
+Para hacer Zoom In o Zoom Out usa la rueda del mouse.
