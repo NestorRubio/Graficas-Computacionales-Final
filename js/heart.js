@@ -1,20 +1,42 @@
 function createScene () {  
     const  scene = new THREE.Scene()  
     const  camera = new THREE.PerspectiveCamera(60,  window.innerWidth / window.innerHeight, 1, 100)  
-    camera.position.z = 30       
-   
+    camera.position.z = 30
+
+
     const  renderer = new THREE.WebGLRenderer({ antialias: true })
     renderer.setSize(window.innerWidth, window.innerHeight)  
     document.body.appendChild(renderer.domElement)  
-        
+    
+    const listener = new THREE.AudioListener();
+    camera.add( listener );
+    const sound = new THREE.Audio( listener );
+    const audioLoader = new THREE.AudioLoader();
+
+    audioLoader.load( '../music/TodoParaTi.ogg', function( buffer ) {
+	    sound.setBuffer( buffer );
+	    sound.setLoop( true );
+	    sound.setVolume( 0.5 );
+        sound.play();
+    });
+
     const color = 0xFFFFFF  
-    const intensity = 0.75 
+    const intensity = 0.75
+
     const light1 = new THREE.PointLight(color, intensity)
     const light2 = new THREE.PointLight(color, intensity)
+    const light3 = new THREE.PointLight(color, intensity)
+    const light4 = new THREE.PointLight(color, intensity)
+
     light1.position.set(-15, -10, 30)
-    light2.position.set(15, 10, 30)   
+    light2.position.set(15, 10, 30)
+    light3.position.set(-15, -10, -30)
+    light4.position.set(15, 10, -30)    
     scene.add(light1)
-    scene.add(light2)     
+    scene.add(light2)
+    scene.add(light3)
+    scene.add(light4)
+    scene.background = new THREE.Color(0xcc6699);       
     return {   
       scene,
       camera,
@@ -26,14 +48,17 @@ function init () {
     const {scene, camera, renderer} = createScene()
     const { vertices, trianglesIndexes} = useCoordinates()
     const { geo, material, heartMesh } = createHeartMesh(vertices, trianglesIndexes)
+    const { controls } = setControls(camera, renderer.domElement)
     scene.add(heartMesh)
+
     const  animate = function () {
         requestAnimationFrame( animate )
         renderer.render( scene, camera )
         heartMesh.rotation.y -= 0.005
         beatingAnimation(heartMesh)
+        controls.update()
     }
-    animate()
+    animate();
 }
 
 init()
@@ -112,7 +137,8 @@ function createHeartMesh (coordinatesList, trianglesIndexes) {
 }
 
 geo.computeVertexNormals()
-    const material = new THREE.MeshPhongMaterial( { color: 0xad0c00 } )
+    const texture = new THREE.TextureLoader().load('../textures/textura5.png');
+    const material = new THREE.MeshPhongMaterial( { map: texture } )
     const heartMesh = new THREE.Mesh(geo, material)
     return {
         geo,
@@ -127,3 +153,13 @@ function addWireFrameToMesh (mesh, geometry) {
     const line = new THREE.LineSegments( wireframe, lineMat )
     mesh.add(line)
 }
+
+function  setControls (camera, domElement) {
+    const controls = new  THREE.OrbitControls( camera, domElement )
+    controls.update()
+    
+    return {
+        controls
+    }
+}
+
