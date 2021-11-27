@@ -16,7 +16,7 @@ function createScene () {
     audioLoader.load( '../music/TodoParaTi.ogg', function( buffer ) {
 	    sound.setBuffer( buffer );
 	    sound.setLoop( true );
-	    sound.setVolume( 0.5 );
+	    sound.setVolume( 0.3 );
         sound.play();
     });
 
@@ -51,11 +51,26 @@ function init () {
     const { controls } = setControls(camera, renderer.domElement)
     scene.add(heartMesh)
 
+    const geometryCube = new THREE.BoxGeometry(10, 10, 10);
+    const loaderCube = new THREE.TextureLoader();
+    loaderCube.crossOrigin = " ";
+
+    const cubeMaterials = [
+        new THREE.MeshPhongMaterial({ map: loaderCube.load('../textures/vale1.png')}), //right side
+        new THREE.MeshPhongMaterial({ map: loaderCube.load('../textures/vale2.png')}), //left side
+        new THREE.MeshPhongMaterial({ map: loaderCube.load('../textures/vale3.png')}), //top side
+        new THREE.MeshPhongMaterial({ map: loaderCube.load('../textures/vale4.png')}), //bottom side
+        new THREE.MeshPhongMaterial({ map: loaderCube.load('../textures/vale5.png')}), //front side
+        new THREE.MeshPhongMaterial({ map: loaderCube.load('../textures/vale6.png')}) //back side
+    ];
+    const cube = new THREE.Mesh(geometryCube, cubeMaterials);
+    scene.add(cube);
+    cube.position.set(0, -5, 0);
+
     const  animate = function () {
         requestAnimationFrame( animate )
         renderer.render( scene, camera )
         heartMesh.rotation.y -= 0.005
-        beatingAnimation(heartMesh)
         controls.update()
     }
     animate();
@@ -137,7 +152,7 @@ function createHeartMesh (coordinatesList, trianglesIndexes) {
 }
 
 geo.computeVertexNormals()
-    const texture = new THREE.TextureLoader().load('../textures/textura5.png');
+    const texture = new THREE.TextureLoader().load('../textures/texturaCorazon.png');
     const material = new THREE.MeshPhongMaterial( { map: texture } )
     const heartMesh = new THREE.Mesh(geo, material)
     return {
